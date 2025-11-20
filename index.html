@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <p>Redirecting to app...</p>
+    </div>
+    <script>
+        // Extract the query parameters from the current URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state');
+        const error = urlParams.get('error');
+        
+        // Build the redirect URL to the app
+        if (error) {
+            // If there's an error, redirect with error parameter
+            console.log('OAuth error:', error);
+            window.location.href = `kicktest://oauth/callback?error=${encodeURIComponent(error)}`;
+        } else if (code) {
+            // Redirect to app with authorization code
+            console.log('OAuth code received, redirecting to app...');
+            let redirectUrl = `kicktest://oauth/callback?code=${encodeURIComponent(code)}`;
+            if (state) {
+                redirectUrl += `&state=${encodeURIComponent(state)}`;
+            }
+            window.location.href = redirectUrl;
+            
+            // Fallback message if app doesn't open
+            setTimeout(function() {
+                document.querySelector('.container').innerHTML = 
+                    '<p>If the app didn\'t open automatically, please return to the app manually.</p>';
+            }, 2000);
+        } else {
+            // Fallback if no code or error
+            console.log('No OAuth parameters found');
+            window.location.href = 'kicktest://oauth/callback';
+        }
+    </script>
+</body>
+</html>
+
