@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <p>Redirecting to app...</p>
+    <script>
+        // Extract the query parameters from the current URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state');
+        const error = urlParams.get('error');
+        
+        // Build the redirect URL to the app
+        if (error) {
+            // If there's an error, redirect with error parameter
+            window.location.href = `kicktest://oauth/callback?error=${encodeURIComponent(error)}`;
+        } else if (code) {
+            // Redirect to app with authorization code
+            let redirectUrl = `kicktest://oauth/callback?code=${encodeURIComponent(code)}`;
+            if (state) {
+                redirectUrl += `&state=${encodeURIComponent(state)}`;
+            }
+            window.location.href = redirectUrl;
+        } else {
+            // Fallback if no code or error
+            window.location.href = 'kicktest://oauth/callback';
+        }
+    </script>
+</body>
+</html>
+
