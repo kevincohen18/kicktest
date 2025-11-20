@@ -37,7 +37,8 @@ class AuthenticationManager: NSObject, ObservableObject {
     // what's registered in Kick's developer portal. Even one character difference causes
     // Kick to redirect to homepage instead of showing the login/consent screen.
     // Use the SAME literal string in both authorize and token exchange calls.
-    private let redirectURI = "https://kicktest123.pages.dev"
+    // Kick portal currently set to the hosted index.html path.
+    private let redirectURI = "https://kicktest123.pages.dev/index.html"
     private let authURL = "https://kick.com/oauth/authorize"
     private let tokenURL = "https://kick.com/oauth/token"
     private let apiBaseURL = "https://kick.com/api/v1"
@@ -54,9 +55,8 @@ class AuthenticationManager: NSObject, ObservableObject {
         
         print("🔐 Opening OAuth URL: \(url.absoluteString)")
         
-        // Use the HTTPS redirect URI scheme for the callback
-        // The web page will redirect to kicktest:// which our app will handle
-        let callbackScheme = redirectURI.hasPrefix("https://") ? "kicktest" : redirectURI.components(separatedBy: "://").first ?? "kicktest"
+        // Hosted page will forward to our custom scheme; keep this in sync with Info.plist URL Type
+        let callbackScheme = "kicktest"
         
         webAuthSession = ASWebAuthenticationSession(
             url: url,
@@ -305,4 +305,3 @@ struct KickUser: Codable {
         case profilePicture = "profile_picture"
     }
 }
-
